@@ -1,51 +1,47 @@
-const express = require("express");
-const path = require("path");
-const app = express();
-const PORT = 3000;
+// index.js
+// where your node app starts
 
-// Root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+var express = require('express');
+var app = express();
+var cors = require('cors');
+
+// Enable CORS for API testing
+app.use(cors({ optionsSuccessStatus: 200 }));
+
+// Serve static files (like the HTML file)
+app.use(express.static('public'));
+
+// Serve the HTML page
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + '/views/index.html');
 });
 
-// Default timestamp route - current time
-app.get("/api", (req, res) => {
-    const now = new Date();
-    res.json({
-        unix: now.getTime(),
-        utc: now.toUTCString()
-    });
-});
+// API Endpoint for Timestamp
+app.get("/api/:date?", function (req, res) {
+  let date = req.params.date;
+  let unix;
+  let utc;
 
-// Timestamp with date parameter
-app.get("/api/:date", (req, res) => {
-    const dateParam = req.params.date;
-    let date;
+  // If no date is provided, return current timestamp
+  if (!date) {
+    unix = new Date().getTime();
+    utc = new Date().toUTCString();
+    res.json({ unix: unix, utc: utc });
+  } else {
+    let parsedDate = isNaN(date) ? new Date(date) : new Date(parseInt(date));
 
-    // If it's a number, treat it as Unix timestamp (milliseconds)
-    if (!isNaN(dateParam)) {
-        date = new Date(parseInt(dateParam));
+    // If the date is invalid, return error
+    if (parsedDate == 'Invalid Date') {
+      res.json({ error: "Invalid Date" });
     } else {
-        // Try parsing the date string using a more standardized format (e.g., YYYY-MM-DD)
-        date = new Date(dateParam);
-        if (date.toString() === "Invalid Date") {
-            // Try ISO format if it's not valid
-            date = new Date(`${dateParam}T00:00:00Z`);
-        }
+      unix = parsedDate.getTime();
+      utc = parsedDate.toUTCString();
+      res.json({ unix: unix, utc: utc });
     }
-
-    // Handle invalid date
-    if (date.toString() === "Invalid Date") {
-        return res.json({ error: "Invalid Date" });
-    }
-
-    res.json({
-        unix: date.getTime(),
-        utc: date.toUTCString()
-    });
+  }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+// Start the server on a dynamic port (or default to 3000)
+var listener = app.listen(process.env.PORT || 3000, function () {
+  console.log('Your app is listening on port ' + listener.address().port);
 });
