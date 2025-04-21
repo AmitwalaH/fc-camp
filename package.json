@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node Timestamp-microservice/index.js",
-    "dev": "nodemon Timestamp-microservice/index.js",
+    "start": "node Exercise-Tracker/index.js",
+    "dev": "nodemon Exercise-Tracker/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,7 +20,11 @@
   "homepage": "https://github.com/AmitwalaH/fc-camp#readme",
   "description": "",
   "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "mongoose": "^8.13.2",
     "nodemon": "^3.1.9"
   }
 }

@@ -22,6 +22,7 @@ app.get("/api/:date?", function (req, res) {
 
   // If no date is provided (empty or missing date parameter), return current timestamp
   if (!date) {
+    // Current time
     unix = new Date().getTime();
     utc = new Date().toUTCString();
     return res.json({ unix: unix, utc: utc });
